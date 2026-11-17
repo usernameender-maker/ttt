@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ievf-fault-tolerance-primitives"
+version = "0.1.0"
+description = "Fail-closed validation and checkpoint recovery primitives for IEVF research"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "AGPL-3.0-or-later" }
+dependencies = []
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+py-modules = ["fault_tolerance"]
