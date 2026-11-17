@@ -1,0 +1,484 @@
+{
+  "schema_version": 1,
+  "name": "Public Scientific Data Source Registry",
+  "description": "Candidate public repositories for EvidenceChain and IEVF-CORE provenance, validation, and reproducibility benchmarking. This registry intentionally separates repository metadata from validated evidence and marks dataset-specific access/version/licensing details for confirmation.",
+  "registry": [
+    {
+      "name": "NCBI GEO",
+      "domain": "genomics",
+      "official_url": "https://www.ncbi.nlm.nih.gov/geo/",
+      "api": {
+        "url": "https://www.ncbi.nlm.nih.gov/books/NBK25499/",
+        "type": "Entrez E-utilities + FTP",
+        "notes": "Programmatic access is available via NCBI Entrez and GEO FTP. No single unified versioned dataset API exists for all records."
+      },
+      "identifiers": {
+        "series": "GSE",
+        "sample": "GSM",
+        "platform": "GPL",
+        "dataset": "GDS"
+      },
+      "versioning": {
+        "mechanism": "Accession-based lineage; updates tracked through submission history",
+        "notes": "Previous snapshots are not consistently exposed as formal dataset versions; dataset-specific checks are required."
+      },
+      "access": {
+        "public": true,
+        "requires_login": false,
+        "notes": "Most GEO data are public; some human-subject datasets may require controlled access (e.g., dbGaP) or study-specific approval."
+      },
+      "license": {
+        "summary": "No single uniform license; submitter and repository metadata must be checked per study.",
+        "source_url": "https://www.ncbi.nlm.nih.gov/geo/info/terms.html"
+      },
+      "file_formats": [
+        "SOFT",
+        "MINiML",
+        "TXT",
+        "CSV",
+        "FASTQ",
+        "CEL",
+        "raw vendor files"
+      ],
+      "validation_focus": [
+        "sample-to-study lineage",
+        "metadata completeness",
+        "controlled-access human data handling"
+      ]
+    },
+    {
+      "name": "ENCODE",
+      "domain": "genomics/epigenomics",
+      "official_url": "https://www.encodeproject.org/",
+      "api": {
+        "url": "https://www.encodeproject.org/help/rest-api/",
+        "type": "REST API",
+        "notes": "Official REST API for experiments, files, biosamples, and metadata queries."
+      },
+      "identifiers": {
+        "experiment": "ENCSR",
+        "biosample": "ENSB",
+        "file": "ENCFF"
+      },
+      "versioning": {
+        "mechanism": "Release/versioned metadata and file records; legacy records may be archived separately",
+        "notes": "Versioning is handled through release metadata and file-level identity, but dataset-specific confirmation is recommended."
+      },
+      "access": {
+        "public": true,
+        "requires_login": false,
+        "notes": "Most data are public; some embargoed or limited-release records can be time-gated."
+      },
+      "license": {
+        "summary": "ENCODE data is released under the Creative Commons CC0 1.0 Universal Public Domain Dedication; confirm dataset and file-level terms if necessary.",
+        "source_url": "https://www.encodeproject.org/about/data-use-policy/"
+      },
+      "file_formats": [
+        "FASTQ",
+        "BAM",
+        "bigWig",
+        "BED",
+        "JSON",
+        "TSV"
+      ],
+      "validation_focus": [
+        "protocol lineage",
+        "file-level integrity",
+        "metadata-to-file mapping"
+      ]
+    },
+    {
+      "name": "Human Cell Atlas",
+      "domain": "single-cell biology",
+      "official_url": "https://www.humancellatlas.org/",
+      "api": {
+        "url": "https://data.humancellatlas.org/developers/api-overview",
+        "type": "Data Coordination Platform API",
+        "notes": "Public metadata and dataset access via the HCA Data Coordination Platform."
+      },
+      "identifiers": {
+        "project": "UUID",
+        "sample": "UUID",
+        "file": "UUID"
+      },
+      "versioning": {
+        "mechanism": "Snapshot/release-based dataset publication",
+        "notes": "Version policy is release-based and should be confirmed at the dataset or snapshot level."
+      },
+      "access": {
+        "public": true,
+        "requires_login": false,
+        "notes": "Publicly released datasets are available; some project-specific restrictions may apply."
+      },
+      "license": {
+        "summary": "Data-sharing policy aligns with open publication and re-use; CC BY 4.0 is commonly referenced by HCA public resources, with dataset-specific terms to confirm.",
+        "source_url": "https://www.humancellatlas.org/data-sharing-policy/"
+      },
+      "file_formats": [
+        "FASTQ",
+        "BAM",
+        "HDF5",
+        "MTX",
+        "JSON",
+        "CSV"
+      ],
+      "validation_focus": [
+        "ontology mapping",
+        "cell-type consistency",
+        "cross-study identity harmonization"
+      ]
+    },
+    {
+      "name": "CELLxGENE Census",
+      "domain": "single-cell data / atlas integration",
+      "official_url": "https://chanzuckerberg.github.io/cellxgene-census/",
+      "api": {
+        "url": "https://chanzuckerberg.github.io/cellxgene-census/python-api.html",
+        "type": "Python API + REST endpoints",
+        "notes": "Official API documentation is available through the Census docs and the API is backed by the Census data model."
+      },
+      "identifiers": {
+        "dataset_id": "dataset_id",
+        "dataset_version_id": "dataset_version_id",
+        "collection_id": "collection_id",
+        "collection_version_id": "collection_version_id"
+      },
+      "versioning": {
+        "mechanism": "Explicit dataset_version_id and collection_version_id identifiers",
+        "notes": "This is one of the strongest public examples of formal versioning among scientific repositories."
+      },
+      "access": {
+        "public": true,
+        "requires_login": false,
+        "notes": "General public access; dataset-level terms must still be checked."
+      },
+      "license": {
+        "summary": "Dataset-specific license metadata should be checked; general CZI materials point toward open re-use and citation-based use.",
+        "source_url": "https://chanzuckerberg.github.io/cellxgene-census/"
+      },
+      "file_formats": [
+        "H5AD",
+        "AnnData",
+        "CSV",
+        "TSV",
+        "JSON"
+      ],
+      "validation_focus": [
+        "dataset version locking",
+        "stable identity mapping",
+        "cross-dataset ontology consistency"
+      ]
+    },
+    {
+      "name": "PRIDE Archive",
+      "domain": "proteomics",
+      "official_url": "https://www.ebi.ac.uk/pride/",
+      "api": {
+        "url": "https://www.ebi.ac.uk/pride/ws/archive/swagger-ui.html",
+        "type": "REST API",
+        "notes": "Official PRIDE Archive REST API for dataset and file access."
+      },
+      "identifiers": {
+        "dataset": "PXD"
+      },
+      "versioning": {
+        "mechanism": "Persistent accession with dataset update history",
+        "notes": "Versioning is weaker than CELLxGENE/OpenNeuro for snapshot retrieval; confirm dataset-level update policy."
+      },
+      "access": {
+        "public": true,
+        "requires_login": false,
+        "notes": "Public by default; embargo may apply until publication or release."
+      },
+      "license": {
+        "summary": "PRIDE recommends open re-use and attribution; CC0 is commonly referenced, but dataset-specific conditions should be confirmed.",
+        "source_url": "https://www.ebi.ac.uk/pride/about/policies"
+      },
+      "file_formats": [
+        "mzML",
+        "mzXML",
+        "raw vendor files",
+        "FASTA",
+        "mzTab",
+        "mzIdentML"
+      ],
+      "validation_focus": [
+        "instrument to analysis lineage",
+        "raw-to-processed file mapping",
+        "checksum verification"
+      ]
+    },
+    {
+      "name": "MetaboLights",
+      "domain": "metabolomics",
+      "official_url": "https://www.ebi.ac.uk/metabolights/",
+      "api": {
+        "url": "https://www.ebi.ac.uk/metabolights/ws/api/",
+        "type": "REST API",
+        "notes": "Official MetaboLights API exposes study metadata and files."
+      },
+      "identifiers": {
+        "study": "MTBLS"
+      },
+      "versioning": {
+        "mechanism": "Stable accession with release-based publication",
+        "notes": "Formal snapshot/version retrieval should be confirmed per study and release cycle."
+      },
+      "access": {
+        "public": true,
+        "requires_login": false,
+        "notes": "Public after release or embargo policies are satisfied."
+      },
+      "license": {
+        "summary": "MetaboLights is generally open and often aligns with CC0 or similar open-access principles; individual study metadata should be reviewed.",
+        "source_url": "https://www.ebi.ac.uk/metabolights/policies"
+      },
+      "file_formats": [
+        "ISA-Tab",
+        "mzML",
+        "nmrML",
+        "CSV",
+        "TSV"
+      ],
+      "validation_focus": [
+        "sample-to-assay linkage",
+        "protocol metadata lineage",
+        "metabolite identifier normalization"
+      ]
+    },
+    {
+      "name": "OpenNeuro",
+      "domain": "neuroimaging / BIDS",
+      "official_url": "https://openneuro.org/",
+      "api": {
+        "url": "https://openneuro.org/public/docs/api",
+        "type": "OpenNeuro API + BIDS dataset access",
+        "notes": "Official API and BIDS-based public dataset access."
+      },
+      "identifiers": {
+        "dataset": "dsXXXXXX",
+        "version": "snapshot/version metadata"
+      },
+      "versioning": {
+        "mechanism": "Versioned dataset snapshots and immutable dataset identities",
+        "notes": "OpenNeuro is one of the stronger examples of public dataset versioning through BIDS and snapshot metadata."
+      },
+      "access": {
+        "public": true,
+        "requires_login": false,
+        "notes": "Released datasets are public; sensitive or restricted data may require additional review."
+      },
+      "license": {
+        "summary": "Default open re-use usually aligns with CC0; individual dataset terms should be checked.",
+        "source_url": "https://openneuro.org/about/license"
+      },
+      "file_formats": [
+        "BIDS",
+        "NIfTI",
+        "JSON",
+        "TSV",
+        "CSV"
+      ],
+      "validation_focus": [
+        "BIDS compliance",
+        "version integrity",
+        "experimental metadata consistency"
+      ]
+    },
+    {
+      "name": "NASA OSDR",
+      "domain": "space biology / omics / life sciences",
+      "official_url": "https://osdr.nasa.gov/",
+      "api": {
+        "url": "https://visualization.osdr.nasa.gov/biodata/api/",
+        "type": "REST API / biological data API",
+        "notes": "Official OSDR biological data API provides dataset and metadata retrieval."
+      },
+      "identifiers": {
+        "dataset": "OSD-xx",
+        "subresource": "dataset accession / file identifier"
+      },
+      "versioning": {
+        "mechanism": "API-versioned access and dataset-version metadata",
+        "notes": "Formal per-dataset snapshot/version behavior should be confirmed at the record level."
+      },
+      "access": {
+        "public": true,
+        "requires_login": false,
+        "notes": "Open science repository; AWS mirror and public dataset access are intended for broad reuse."
+      },
+      "license": {
+        "summary": "U.S. government research data is designed for open access; dataset-specific attribution policies should be checked.",
+        "source_url": "https://www.nasa.gov/reference/osdr-help-getting-started-with-aws-and-osdr-data/"
+      },
+      "file_formats": [
+        "JSON",
+        "CSV",
+        "TSV",
+        "NetCDF",
+        "HDF5",
+        "discipline-specific science file formats"
+      ],
+      "validation_focus": [
+        "dataset lineage",
+        "file integrity checks",
+        "multi-domain metadata harmonization"
+      ]
+    },
+    {
+      "name": "Materials Project",
+      "domain": "materials science",
+      "official_url": "https://materialsproject.org/",
+      "api": {
+        "url": "https://docs.materialsproject.org/API/",
+        "type": "REST API + Python client",
+        "notes": "Official API and project documentation for materials data and structures."
+      },
+      "identifiers": {
+        "material": "mp-xxxxx"
+      },
+      "versioning": {
+        "mechanism": "API versioning plus material record change history",
+        "notes": "Project-level database snapshots and changelog metadata are available; individual material revisions should be examined when needed."
+      },
+      "access": {
+        "public": true,
+        "requires_login": true,
+        "notes": "The public API is available, but an API key is required for some access patterns and usage limits apply."
+      },
+      "license": {
+        "summary": "Open materials data with CC BY-style attribution; check current documentation for exact terms.",
+        "source_url": "https://materialsproject.org/about"
+      },
+      "file_formats": [
+        "JSON",
+        "CSV",
+        "CIF",
+        "POSCAR",
+        "VASP-style inputs"
+      ],
+      "validation_focus": [
+        "computed-property provenance",
+        "structure-to-property mapping",
+        "calculation metadata integrity"
+      ]
+    },
+    {
+      "name": "NIST Materials Data Repository",
+      "domain": "materials science / standards",
+      "official_url": "https://materialsdata.nist.gov/",
+      "api": {
+        "url": "https://materialsdata.nist.gov/dspace/api-docs/",
+        "type": "REST API",
+        "notes": "REST API and DOI-based dataset metadata for repository access."
+      },
+      "identifiers": {
+        "dataset": "DOI",
+        "repository_id": "MDS2 identifier"
+      },
+      "versioning": {
+        "mechanism": "DOI and repository metadata track versions and revisions",
+        "notes": "Some datasets may not expose formal snapshots; DOI metadata is the authoritative binding point."
+      },
+      "access": {
+        "public": true,
+        "requires_login": false,
+        "notes": "Most datasets are public; check individual records for embargo or exceptions."
+      },
+      "license": {
+        "summary": "Many records are public domain or open-use, but dataset-specific licenses must be reviewed."
+      },
+      "file_formats": [
+        "JSON",
+        "XML",
+        "CSV",
+        "ZIP",
+        "instrument-specific files"
+      ],
+      "validation_focus": [
+        "DOI integrity",
+        "file manifest completeness",
+        "metadata schema validation"
+      ]
+    },
+    {
+      "name": "NOAA NCEI",
+      "domain": "climate / environmental / geophysical data",
+      "official_url": "https://www.ncei.noaa.gov/",
+      "api": {
+        "url": "https://www.ncei.noaa.gov/support/access-data-service-api-user-documentation",
+        "type": "REST API + ERDDAP + OPeNDAP + FTP",
+        "notes": "NOAA NCEI offers multiple server interfaces for geospatial and time-series data access."
+      },
+      "identifiers": {
+        "dataset": "NCEI accession / DOI",
+        "product": "product identifier"
+      },
+      "versioning": {
+        "mechanism": "Version/release metadata and timeline-based products",
+        "notes": "Data products often maintain historical revisions; dataset-specific version metadata should be used when available."
+      },
+      "access": {
+        "public": true,
+        "requires_login": false,
+        "notes": "Public data; no user account required for most public APIs."
+      },
+      "license": {
+        "summary": "U.S. government data are generally public domain; dataset-level terms may still be consulted.",
+        "source_url": "https://www.ncei.noaa.gov/"
+      },
+      "file_formats": [
+        "NetCDF",
+        "HDF",
+        "GRIB",
+        "CSV",
+        "GeoTIFF"
+      ],
+      "validation_focus": [
+        "temporal consistency",
+        "spatial metadata validation",
+        "instrument provenance"
+      ]
+    },
+    {
+      "name": "USGS ScienceBase",
+      "domain": "geospatial / geology / hydrology / environmental science",
+      "official_url": "https://www.sciencebase.gov/",
+      "api": {
+        "url": "https://www.sciencebase.gov/about/sciencebase/services/",
+        "type": "REST API / Catalog API",
+        "notes": "Public catalog and item retrieval API for USGS and related geospatial/scientific data."
+      },
+      "identifiers": {
+        "item": "ScienceBase item ID",
+        "doi": "DOI when assigned"
+      },
+      "versioning": {
+        "mechanism": "Catalog metadata with item revision history",
+        "notes": "Versioning is not always uniform across all records; dataset-specific review is required."
+      },
+      "access": {
+        "public": true,
+        "requires_login": false,
+        "notes": "Public catalog; exceptions may apply to data with restrictions or third-party licensing."
+      },
+      "license": {
+        "summary": "U.S. government public data generally carries public-domain reuse rights; dataset-specific restrictions should still be reviewed.",
+        "source_url": "https://www.sciencebase.gov/"
+      },
+      "file_formats": [
+        "JSON",
+        "XML",
+        "CSV",
+        "GeoTIFF",
+        "Shapefile",
+        "project-specific file formats"
+      ],
+      "validation_focus": [
+        "location provenance",
+        "item metadata integrity",
+        "versioned product tracking"
+      ]
+    }
+  ]
+}
