@@ -1,86 +1,74 @@
 # IEVF research prototype
 
-This repository contains a compact, dependency-light Python research prototype for
-fail-closed state validation, evidence tracking, auditability, and deterministic
-phrase/word-game utilities. It is not a production autonomous navigation system.
+This repository is a dependency-light Python research prototype for state encoding,
+validation, evidence, auditability, phrase matching, and optional native matrix
+contraction. It is not a production autonomous navigation system.
 
-## Current components
+## Components
 
 - `src/ievf/state.py`: 16-bit state encoding and decoding
-- `src/ievf/serialization.py`: canonical JSON and SHA-256 helpers
-- `src/ievf/evidence.py`: immutable evidence records and validation
-- `src/ievf/audit.py`: hash-linked JSONL audit ledger
-- `src/ievf/lifecycle.py`: lifecycle and checkpoint validation
-- `src/ievf/wordgame.py`: deterministic word scoring and word-ladder checks
-- `src/ievf/phrase_communication.py`: explicit phrase templates and slot extraction
+- `src/ievf/serialization.py`, `evidence.py`, `audit.py`, `lifecycle.py`: canonical records, validation, audit chain, and lifecycle helpers
+- `src/ievf/phrase_communication.py`: deterministic phrase templates and slot extraction
 - `src/ievf/native_wrapper.py`: optional native matrix kernel with explicit fallback
-- `src/fault_tolerance.py`: quorum, retry, checkpoint, and guarded recovery primitives
-- `src/ievf/batch_runner.py`: memory-bounded synthetic matrix-contraction benchmark batches
+- `src/ievf/batch_runner.py`: bounded matrix contraction benchmarks with JSONL records
+- `src/ievf/statewall.py`: seeded synthetic Battleship-style search/evade game on a state wall (256x256 = 65,536 cells by default)
 
-The optional native extension is defined in `native/CMakeLists.txt` and
-`native/contraction.cpp`, and can be built with `python build_native.py`.
+The state-wall game is a toy benchmark, not a flight controller. Asteroids and
+ships are simulated locally; no real telemetry, hardware, or external system is
+connected.
 
-## Dependencies and installation
+## Install and test
 
-The base package targets Python 3.11+ and has no mandatory runtime dependencies.
+Base package (Python 3.11+):
 
 ```bash
 python -m pip install -e .
+PYTHONPATH=src python -m unittest discover -s tests -v
 ```
 
-The native extension and benchmark require NumPy; compiling the extension also
-requires pybind11, CMake, a C++17 compiler, and an OpenMP-capable toolchain:
+Optional NumPy/native tools:
 
 ```bash
 python -m pip install -e '.[native]'
 python build_native.py
 ```
 
-For benchmark-only use without compiling the extension:
+## Persistent benchmark data
 
-```bash
-python -m pip install numpy
-```
+`StatewallSimulation.save_jsonl(path)` appends one JSON object per tick and never
+silently overwrites existing records. Each record includes scenario, seed, board
+size, ships alive, targets found/remaining, hazard count, collision events, scan
+coverage, command success, and nearest threat distance. Keep benchmark outputs in
+a versioned or backed-up results directory; source-control commits preserve code
+and schemas, but generated data is not automatically committed.
 
-## Tests
-
-```bash
-PYTHONPATH=src python -m unittest discover -s tests -v
-```
-
-Native kernel tests are skipped when the optional extension is not built. Native
-CI builds the extension first and runs those tests in strict native mode.
-
-## Synthetic contraction benchmark
-
-`BatchRunner` runs deterministic, synthetic matrix multiplication cases, checks
-estimated allocation against a per-case memory limit, optionally compares output
-to NumPy, and appends JSONL measurements (backend, dimensions, timing, GFLOP/s,
-contraction count, and error) for later comparison. It does not simulate a mesh,
-Kalman filter, navigation, or real telemetry.
+The matrix benchmark also appends JSONL results (backend, dimensions, seed,
+contraction count, estimated memory, timing, throughput, and NumPy comparison
+error). Example:
 
 ```python
 from ievf.batch_runner import BatchRunner, BatchScenario
 
-scenarios = [
-    BatchScenario("baseline", m=128, k=128, n=128, seed=7),
-    BatchScenario("larger", m=256, k=256, n=128, seed=8),
-]
-results = BatchRunner("benchmark-results/run.jsonl").run_batch(scenarios)
-for result in results:
-    print(result.scenario, result.backend, result.mean_ms, result.gflops_at_min)
+cases = [BatchScenario("baseline", m=128, k=128, n=128, seed=7)]
+results = BatchRunner("benchmark-results/matrix.jsonl").run_batch(cases)
 ```
 
-The default memory cap is 256 MiB per scenario. Verification is limited to
-individual dimensions up to 2048 and is included in the allocation estimate.
+## Improvement loop
+
+For each category (correctness, performance, memory, coverage, hazard collisions,
+and reproducibility): preserve the baseline record, change one factor at a time,
+rerun with the same seeds, compare metrics, and keep a change only when the
+relevant metric improves without regressions elsewhere. If it does not demonstrate
+an improvement, revert it and select a different category or hypothesis. Benchmark
+measurements are evidence, not guarantees; compare repeated runs and record the
+runtime/backend environment when making performance claims.
 
 ## Scope
 
-The repository currently does not implement AETHER-MESH, quantum telemetry,
-GNSS/WGS-84 conversion, a Kalman filter, or production navigation. Any future
-multi-agent work should be clearly labeled as synthetic research simulation until
-validated independently.
+The project does not implement a real swarm, Kalman filter, quantum telemetry,
+GNSS conversion, or production navigation system. The state-wall simulation and
+matrix benchmarks are synthetic research tools.
 
 ## License
 
-Licensed under AGPL-3.0-or-later; see `LICENSE`.
+AGPL-3.0-or-later; see `LICENSE`.
