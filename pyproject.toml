@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=68,<76", "wheel>=0.42"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ievf"
+version = "0.1.0"
+description = "Deterministic, memory-bounded matrix contraction benchmarks"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "numpy>=1.26,<3",
+]
+
+[project.optional-dependencies]
+dev = [
+  "build>=1.2,<2",
+  "pre-commit>=3.7,<5",
+  "pytest>=8,<9",
+]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]

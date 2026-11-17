@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "scenarios": [
+    {
+      "name": "tiny_square_64",
+      "family": "square",
+      "rows": 64,
+      "cols_a": 64,
+      "cols_b": 64,
+      "seed": 7,
+      "dtype": "float64",
+      "tolerance": 1e-12
+    },
+    {
+      "name": "tall_skinny_256_64",
+      "family": "tall",
+      "rows": 256,
+      "cols_a": 64,
+      "cols_b": 64,
+      "seed": 11,
+      "dtype": "float64",
+      "tolerance": 1e-12
+    },
+    {
+      "name": "wide_rect_64_256",
+      "family": "wide",
+      "rows": 64,
+      "cols_a": 64,
+      "cols_b": 256,
+      "seed": 13,
+      "dtype": "float64",
+      "tolerance": 1e-12
+    },
+    {
+      "name": "non_power_127_131",
+      "family": "edge",
+      "rows": 127,
+      "cols_a": 131,
+      "cols_b": 97,
+      "seed": 17,
+      "dtype": "float64",
+      "tolerance": 1e-12
+    }
+  ]
+}
