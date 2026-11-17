@@ -2,14 +2,32 @@
 
 TVE-1 / IEVF is a Python project for bounded, reproducible matrix-contraction benchmark runs. Its current implementation provides a scenario/result model and a batch runner in `src/ievf/batch_runner.py`. The runner creates seeded `float64` inputs, enforces an estimated-memory limit, optionally checks outputs against NumPy, records timing and environment metadata, and appends JSONL results.
 
-> **Implementation status:** The repository currently contains the batch runner, but does not yet contain the native contraction extension, `native_wrapper.py`, scenario catalog, result schema, test suite, or end-to-end verification script described in the proposed architecture. The native backend and those validation components must be added before claiming native execution or schema-validated benchmark results. CI currently checks Python syntax and the runner's bounded-scenario validation; it does not claim to build or benchmark a native kernel.
+> **Implementation status:** The repository currently contains the batch runner, but does not yet contain the native contraction extension, `native_wrapper.py`, scenario catalog, result schema, test suite, or end-to-end verification script described by the planned architecture. The current CI builds the Python wheel and checks bounded-scenario validation; it does not claim to build or benchmark a native kernel.
+
+## Install
+
+The package declares its runtime dependency (`numpy`) in `pyproject.toml`. Install it from a source checkout with:
+
+```bash
+python -m pip install .
+```
+
+For local development and packaging checks:
+
+```bash
+python -m pip install -e ".[dev]"
+python -m build --wheel
+```
+
+The `dev` extra contains build, pre-commit, and pytest tooling. Runtime requirements and development tools are intentionally separated so deployment environments do not install test and formatting packages unnecessarily. A deployment should install the wheel built from the intended source revision; the target deployment platform has not yet been specified, so no platform-specific container or cloud configuration is included.
 
 ## Current repository layout
 
 | Path | Role |
 | --- | --- |
 | `src/ievf/batch_runner.py` | Bounded scenario definitions, input generation, timing, optional NumPy comparison, and JSONL result logging. |
-| `.github/workflows/verify.yml` | Lightweight CI checks for Python syntax and scenario memory/dimension validation. |
+| `pyproject.toml` | Package metadata, supported Python version, runtime dependencies, and development extras. |
+| `.github/workflows/verify.yml` | Python matrix CI, package installation, wheel build, and scenario memory/dimension validation. |
 | `.pre-commit-config.yaml` | Common whitespace, JSON/YAML, Python formatting, and C++ formatting hooks. |
 
 ## Current runner behavior
@@ -22,7 +40,7 @@ The runner imports `NativeCore` from `src/ievf/native_wrapper.py`, which is not 
 
 ## Verification
 
-The GitHub Actions workflow runs on pushes and pull requests targeting `main`. It installs NumPy, compiles the Python source, and exercises the runner's scenario validation without allocating benchmark matrices or requiring a native extension.
+GitHub Actions runs on pushes and pull requests targeting `main` for Python 3.10, 3.11, and 3.12. It installs the package with development dependencies, compiles Python sources, builds a wheel, and exercises the runner's scenario validation without allocating benchmark matrices or requiring a native extension.
 
 For local formatting and basic repository checks, install pre-commit and run:
 
