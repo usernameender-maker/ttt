@@ -15,6 +15,12 @@ python build_native.py
 PYTHONPATH=src python -m unittest discover -s tests -p test_native_contract.py -v
 ```
 
+The default package test workflow does not install optional NumPy/native build
+requirements, so `test_native_contract.py` skips when either NumPy or the
+compiled extension is unavailable. The dedicated native CI workflow installs
+the dependencies, builds and import-checks the extension first, and therefore
+runs the native tests rather than skipping them.
+
 `ievf.native_wrapper.NativeCore(require_native=True)` refuses to fall back and
 is used by the native tests. The default wrapper may use NumPy if the optional
 extension is unavailable. The native kernel supports only two-dimensional
