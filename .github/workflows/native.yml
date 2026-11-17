@@ -1,0 +1,32 @@
+name: IEVF Native Matrix Kernel
+
+on:
+  push:
+    branches: [main, "feature/**"]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  native-build-test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install native-test dependencies
+        run: python -m pip install numpy pybind11
+      - name: Build and verify extension import
+        run: python build_native.py
+      - name: Test native kernel (no silent fallback)
+        env:
+          PYTHONPATH: src
+        run: python -m unittest discover -s tests -p test_native_contract.py -v
