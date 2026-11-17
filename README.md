@@ -63,6 +63,43 @@ an improvement, revert it and select a different category or hypothesis. Benchma
 measurements are evidence, not guarantees; compare repeated runs and record the
 runtime/backend environment when making performance claims.
 
+## Native kernel optimization roadmap
+
+The native extension currently implements a general 2-D matrix product using a
+straightforward `i,j,q` loop, OpenMP `collapse(2)` with static scheduling, and
+NumPy-owned input/output buffers. Treat the following as experiments, not assumed
+wins; compare against the existing kernel on the same shapes, seeds, compiler,
+thread count, and machine.
+
+1. **Establish correctness and performance baselines.** Record representative
+   square, tall, wide, small, and non-contiguous-input cases. Check results against
+   NumPy with tolerances, and report repeated timing summaries and backend details.
+2. **Try a portable loop-order improvement first.** For row-major arrays, an
+   `i,q,j` loop makes the right-hand matrix and output traversals contiguous; zero
+   each output row before accumulation. Keep the existing implementation as a
+   comparison until correctness and speed are demonstrated across shapes.
+3. **Then evaluate cache tiling and packing.** Add configurable tile sizes only if
+   profiling shows cache/reuse limits. Packing has allocation and copy costs, so
+   measure end-to-end time, including packing, over small and large matrices.
+4. **Compare OpenMP policies empirically.** Equal-sized output tiles are generally
+   uniform work, so static scheduling is a sensible baseline. Test guided/dynamic
+   scheduling only for measured imbalance; record thread counts and avoid assuming
+   that a 65,536-cell board implies a 65,536-dimensional matrix contraction.
+5. **Keep memory ownership portable.** The current buffers are managed by NumPy
+   and pybind11. Do not replace them with raw `posix_memalign` allocations unless
+   ownership, deallocation, Windows portability, and array lifetime are handled.
+   Unaligned loads are not automatically slower on modern CPUs; add alignment or
+   ISA-specific intrinsics only after profiling and with a portable fallback.
+6. **Preserve numerical behavior.** Avoid fast-math or changing accumulation order
+   without tolerance-based correctness tests. Include zero-sized dimensions,
+   non-contiguous arrays, dtype conversion, and invalid shapes in the contract tests.
+
+The proposed Joseph-form covariance update, Kalman filter, AETHER-MESH telemetry,
+and SPSC ring buffer do not match current repository components and are not
+optimization tasks for this codebase. Revisit them only if those components are
+actually introduced with requirements and tests. The state-wall simulation is a
+toy game and does not currently use the native matrix kernel.
+
 ## Repository review checklist
 
 Use this checklist every time you review a repository and want to keep momentum.
