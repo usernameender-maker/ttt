@@ -1,66 +1,13 @@
 {
   "schema_version": 1,
-  "description": "Small deterministic synthetic workloads for independent IEVF matrix-contraction studies. These are scenario definitions, not measured benchmark results.",
+  "description": "Expanded bounded research scenarios for the current repository. These are tiny-to-moderate synthetic workloads, not unbounded production loads.",
   "scenarios": [
-    {
-      "name": "tiny_correctness",
-      "m": 3,
-      "k": 4,
-      "n": 2,
-      "warmup": 0,
-      "iterations": 5,
-      "seed": 7001,
-      "verify": true,
-      "require_native": true,
-      "max_memory_bytes": 1048576
-    },
-    {
-      "name": "square_64",
-      "m": 64,
-      "k": 64,
-      "n": 64,
-      "warmup": 2,
-      "iterations": 10,
-      "seed": 7002,
-      "verify": true,
-      "require_native": true,
-      "max_memory_bytes": 4194304
-    },
-    {
-      "name": "tall_128x64x32",
-      "m": 128,
-      "k": 64,
-      "n": 32,
-      "warmup": 2,
-      "iterations": 10,
-      "seed": 7003,
-      "verify": true,
-      "require_native": true,
-      "max_memory_bytes": 4194304
-    },
-    {
-      "name": "wide_32x64x128",
-      "m": 32,
-      "k": 64,
-      "n": 128,
-      "warmup": 2,
-      "iterations": 10,
-      "seed": 7004,
-      "verify": true,
-      "require_native": true,
-      "max_memory_bytes": 4194304
-    },
-    {
-      "name": "square_256",
-      "m": 256,
-      "k": 256,
-      "n": 256,
-      "warmup": 2,
-      "iterations": 10,
-      "seed": 7005,
-      "verify": true,
-      "require_native": true,
-      "max_memory_bytes": 16777216
-    }
+    {"name": "tiny_correctness", "m": 3, "k": 4, "n": 2, "warmup": 0, "iterations": 5, "seed": 7001, "verify": true, "require_native": true, "max_memory_bytes": 1048576},
+    {"name": "square_64", "m": 64, "k": 64, "n": 64, "warmup": 2, "iterations": 10, "seed": 7002, "verify": true, "require_native": true, "max_memory_bytes": 4194304},
+    {"name": "tall_128x64x32", "m": 128, "k": 64, "n": 32, "warmup": 2, "iterations": 10, "seed": 7003, "verify": true, "require_native": true, "max_memory_bytes": 4194304},
+    {"name": "wide_32x64x128", "m": 32, "k": 64, "n": 128, "warmup": 2, "iterations": 10, "seed": 7004, "verify": true, "require_native": true, "max_memory_bytes": 4194304},
+    {"name": "square_256", "m": 256, "k": 256, "n": 256, "warmup": 2, "iterations": 10, "seed": 7005, "verify": true, "require_native": true, "max_memory_bytes": 16777216},
+    {"name": "square_512", "m": 512, "k": 512, "n": 512, "warmup": 2, "iterations": 10, "seed": 7006, "verify": true, "require_native": true, "max_memory_bytes": 67108864},
+    {"name": "square_1024", "m": 1024, "k": 1024, "n": 1024, "warmup": 1, "iterations": 5, "seed": 7007, "verify": true, "require_native": true, "max_memory_bytes": 268435456}
   ]
 }

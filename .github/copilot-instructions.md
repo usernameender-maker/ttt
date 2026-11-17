@@ -1,53 +1,28 @@
-# IEVF-CORE — Repository Instructions for GitHub Copilot
-## Project mission
-Develop and validate the IEVF Adaptive State Engine as a reproducible, evidence-driven software architecture.
-Preserve the distinction:
-SOURCE != EVIDENCE != KNOWLEDGE != ANALYSIS != HYPOTHESIS != DECISION != ACTION.
-Never invent test results, scientific findings, integrations, benchmarks, citations, or deployment status.
-## Architecture
-- Preserve the 16-bit state representation and its 65,536 possible states.
-- Keep binary frame handling, evidence records, hashing, reachability, pipeline orchestration, and security gates modular.
-- Preserve deterministic serialization and reproducible execution.
-- Keep provenance and validation status attached to evidence.
-- Treat GNSS, IMU, solar, KEGG, Bio Anchor, and HOPS adapters as templates unless actual integrations and tests demonstrate otherwise.
-- Do not conflate the 65,536-state model with the separate 65,536 x 33 mathematical embedding.
-- Do not claim quantum error correction, quantum advantage, or new physics without independent evidence.
-## Required development procedure
-1. Inspect README.md, CODE_REVIEW.md, source files, and existing tests before changing code.
-2. Identify the requirement and affected modules.
-3. Preserve existing working behavior.
-4. Make small, reviewable changes.
-5. Add tests for normal operation, edge cases, invalid inputs, and failure paths.
-6. Run the complete test suite after changes.
-7. Review the complete Git diff.
-8. Update documentation and the code review when implementation or risk changes.
-## Test commands
-Run from the repository root:
-    PYTHONPATH=src python -m unittest discover -s tests -v
-Run the CLI:
-    PYTHONPATH=src python -m ievf_state --state 65535
-Verify an evidence ledger:
-    PYTHONPATH=src python -m ievf_state --verify-ledger PATH
-Do not report a test as passed unless the command actually ran and returned successfully.
-## Security requirements
-- Never commit credentials, API keys, private keys, tokens, or sensitive telemetry.
-- A SHA-256 hash alone does not establish source authenticity.
-- Do not describe caller-supplied approval booleans as cryptographic authorization.
-- Identify replay protection, key management, trusted timestamps, and durable audit storage as incomplete unless implemented and tested.
-- Never weaken security validation simply to make tests pass.
-- Do not represent this research prototype as certified or production-ready safety-critical equipment.
-## GitHub workflow
-- Work on a feature branch.
-- Do not push directly to main without explicit authorization.
-- Inspect the diff before committing.
-- Never force-push or rewrite shared history.
-- Do not claim remote changes succeeded unless GitHub confirms them.
-- Stop and report permission failures rather than bypassing them.
-## Completion report
-For each task report:
-1. What changed.
-2. Files changed.
-3. Commands executed.
-4. Exact test results.
-5. Remaining defects and risks.
-6. Whether any GitHub operation actually succeeded.
+# Repository Guidelines for GitHub Copilot
+
+## Core engineering philosophy
+- Evidence-driven first: never guess performance metrics, memory footprints, or algorithmic complexity. Rely on benchmarks, profiling data, and schema validation.
+- Strict correctness: any native acceleration (C++/OpenMP/AVX) must cross-validate against reference NumPy implementations. Fail fast on precision drift.
+- Zero-bloat architecture: keep modules modular, lightweight, and self-contained. Avoid speculative dependencies or unverified abstractions.
+
+## Coding standards
+- C++ native core: ensure cache-blocking tile strategies, boundary safety, and explicit memory alignment. Avoid undefined behavior.
+- Python wrappers: maintain type annotations, strict docstrings, and robust exception handling.
+- Testing and benchmarks: all performance changes must be backed by JSONL benchmarking logs and schema validation (`research-data/result.schema.json`).
+- Keep benchmark scenarios bounded and deterministic. Preserve fixed seeds and explicit memory caps.
+
+## Repository-specific rules
+- The current repository is a research prototype for synthetic matrix-contraction and state-wall validation, not a production autonomous system.
+- Do not invent “flight controller,” “swarm,” “telemetry mesh,” or similar production features unless the code and tests exist for them.
+- Prefer transparent, reproducible benchmark definitions in `research-data/scenarios.json` over opaque or hidden performance tuning.
+- If a benchmark result is not logged with environment metadata, treat it as untrustworthy evidence.
+
+## Required validation patterns
+- Native performance work must include a path that compares output against NumPy reference values with a documented tolerance.
+- Small deterministic cases come before larger cases. Increases in matrix dimensions must have explicit memory guards and a rationale.
+- Benchmark outputs should be stored in JSONL and validated against `research-data/result.schema.json` when possible.
+
+## Scope guardrails
+- Keep the hot path limited to actual code and tests in the repository.
+- Avoid speculative changes that are not connected to metadata, tests, or benchmarked evidence.
+- Favor additive, well-contained changes over broad refactors.
