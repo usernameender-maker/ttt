@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.venv/
+venv/
+.DS_Store
+research-data/results/*.tmp
+research-data/results/*.log
+research-data/results/*.out
