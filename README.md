@@ -63,6 +63,65 @@ an improvement, revert it and select a different category or hypothesis. Benchma
 measurements are evidence, not guarantees; compare repeated runs and record the
 runtime/backend environment when making performance claims.
 
+## Repository review checklist
+
+Use this checklist every time you review a repository and want to keep momentum.
+
+### 1. Establish baseline and scope
+- [ ] Confirm repository, branch, and review goal.
+- [ ] Record the starting commit and current branch state.
+- [ ] Read the README and recent changes to understand actual scope.
+- [ ] Check the available test commands, workflows, and data sources.
+- [ ] Capture a baseline benchmark or status snapshot before changes.
+
+### 2. Pick one improvement category at a time
+- [ ] Correctness and edge cases
+- [ ] Test reliability and coverage
+- [ ] Runtime performance
+- [ ] Memory/resource use
+- [ ] Security and dependency hygiene
+- [ ] Documentation and discoverability
+- [ ] Observability and reproducibility
+- [ ] Maintainability and architecture
+
+For the selected category:
+- [ ] Define the metric or pass/fail criteria before editing.
+- [ ] Change only one variable at a time.
+- [ ] Keep the baseline record for comparison.
+- [ ] Run the smallest relevant set of tests and benchmarks.
+- [ ] Compare results and document regressions or uncertainty.
+
+### 3. Decision rules
+- [ ] Keep the change only when the metric improves without meaningful regressions.
+- [ ] If the improvement is not demonstrated, revert or mark it inconclusive.
+- [ ] Move to another category or hypothesis instead of forcing a weak improvement.
+- [ ] Never claim success without recorded results and reproduction steps.
+
+### 4. Save the work and continue
+- [ ] Store results in a versioned or backed-up location.
+- [ ] Record repository, branch, commit, date, environment, seed, and metric summary.
+- [ ] Add a brief next action so the next review can continue without repeating discovery.
+- [ ] Leave an update in the project log, issue, or review notes.
+
+### Review record template
+
+```text
+Date:
+Repository:
+Branch / commit:
+Review goal:
+Category:
+Baseline:
+Hypothesis:
+Change:
+Commands / scenarios:
+Results:
+Regressions or limitations:
+Decision: keep / revert / inconclusive
+Next action:
+Data location:
+```
+
 ## Scope
 
 The project does not implement a real swarm, Kalman filter, quantum telemetry,
@@ -72,3 +131,7 @@ matrix benchmarks are synthetic research tools.
 ## License
 
 AGPL-3.0-or-later; see `LICENSE`.
+
+---
+Last time this was done: 2026-11-17
+Signature: GitHub Copilot Chat Assistant
