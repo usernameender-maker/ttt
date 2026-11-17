@@ -12,7 +12,7 @@ echo "Timestamp: $(date -u +"%Y-%m-%dT%H:%M:%SZ")"
 echo "=========================================================================="
 
 echo "[*] Environment details"
-python - <<'PY'
+"$PYTHON_BIN" - <<'PY'
 import json
 import os
 import platform
@@ -39,15 +39,16 @@ if command -v free >/dev/null 2>&1; then
     free -h || true
 fi
 
-# Validate only a bounded, supported set of scenarios.
-PYTHONPATH=src "$PYTHON_BIN" - <<'PY'
+PYTHONPATH=src "$PYTHON_BIN" - <<'PY' "$JSONL_OUTPUT"
 import json
+import sys
 from pathlib import Path
 from ievf.batch_runner import BatchRunner, BatchScenario
 
 manifest = json.loads(Path('research-data/scenarios.json').read_text(encoding='utf-8'))
 scenarios = [BatchScenario(**row) for row in manifest['scenarios']]
-results = BatchRunner('research-data/results/bounded-benchmark.jsonl').run_batch(scenarios)
+out_path = Path(sys.argv[1])
+results = BatchRunner(out_path).run_batch(scenarios)
 print(f"Finished {len(results)} scenarios")
 PY
 
