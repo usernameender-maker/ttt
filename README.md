@@ -1,19 +1,30 @@
+## Phrase template communication for navigation and travel
 
-## Word game prototype
+`ievf.phrase_communication` provides a deterministic catalog for navigation and
+travel commands. It matches explicit phrases to structured message intents and
+returns the resolved template and slot values. This is a compact communication
+layer for ordered actions, not a full conversational AI.
 
-`ievf.wordgame` provides deterministic letter scoring and word-ladder validation.
-It is a local game utility, not a word corpus or next-word prediction model.
+### Stage structure
+
+- `basic`: direct movement and halt commands
+- `travel`: route and destination phrases
+- `order`: operational guidance and holding actions
+- `space`: orbital and sector navigation phrases
+
+### Example usage
 
 ```python
-from ievf.wordgame import best_move, is_valid_word_chain
+from ievf.phrase_communication import determine_phrase
 
-print(best_move(["dog", "cat", "elephant"]).word)
-print(is_valid_word_chain("code", "node"))
+print(determine_phrase("turn left", "en"))
+print(determine_phrase("travel to docking bay 3", "en"))
+print(determine_phrase("muevete al sector gamma", "es"))
 ```
 
-A supplied dictionary is used as a membership allowlist; an empty dictionary
-rejects all words. Run its standard-library tests with:
+The catalog is explicit and deterministic. If a phrase matches no template, or
+matches more than one template, it raises `ValueError` instead of guessing.
 
 ```sh
-python -m unittest discover -s tests -p test_wordgame.py -v
+python -m unittest discover -s tests -p test_phrase_communication.py -v
 ```
