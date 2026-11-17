@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/ievf/research-data/result.schema.json",
+  "title": "IEVF BatchRunner result record",
+  "description": "One JSON object per line, matching ScenarioResult emitted by ievf.batch_runner.",
+  "type": "object",
+  "required": [
+    "schema_version", "scenario", "shape_a", "shape_b", "seed", "backend",
+    "contraction_count", "estimated_memory_bytes", "min_ms", "mean_ms", "std_ms",
+    "gflops_at_min", "max_abs_error", "timestamp_utc", "python_version",
+    "numpy_version", "platform", "thread_environment"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "scenario": {"type": "string"},
+    "shape_a": {"$ref": "#/$defs/shape"},
+    "shape_b": {"$ref": "#/$defs/shape"},
+    "seed": {"type": "integer"},
+    "backend": {"enum": ["native", "numpy-fallback"]},
+    "contraction_count": {"type": "integer", "minimum": 1},
+    "estimated_memory_bytes": {"type": "integer", "minimum": 1},
+    "min_ms": {"type": "number", "minimum": 0},
+    "mean_ms": {"type": "number", "minimum": 0},
+    "std_ms": {"type": "number", "minimum": 0},
+    "gflops_at_min": {"type": "number", "minimum": 0},
+    "max_abs_error": {"type": ["number", "null"], "minimum": 0},
+    "timestamp_utc": {"type": "string", "format": "date-time"},
+    "python_version": {"type": "string"},
+    "numpy_version": {"type": "string"},
+    "platform": {"type": "string"},
+    "thread_environment": {
+      "type": "object",
+      "properties": {
+        "OMP_NUM_THREADS": {"type": ["string", "null"]},
+        "OPENBLAS_NUM_THREADS": {"type": ["string", "null"]},
+        "MKL_NUM_THREADS": {"type": ["string", "null"]}
+      },
+      "additionalProperties": {"type": ["string", "null"]}
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "shape": {
+      "type": "array",
+      "prefixItems": [{"type": "integer", "minimum": 0}, {"type": "integer", "minimum": 0}],
+      "minItems": 2,
+      "maxItems": 2
+    }
+  }
+}
