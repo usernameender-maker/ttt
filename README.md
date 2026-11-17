@@ -1,157 +1,86 @@
 # IEVF research prototype
 
-This repository contains a compact, standard-library-first research prototype for
-fail-closed state validation, evidence tracking, auditability, and lightweight
-language/word-game utilities. The current codebase is intentionally small and
-explicitly does not claim to be a complete autonomous spatial or command engine.
+This repository contains a compact, dependency-light Python research prototype for
+fail-closed state validation, evidence tracking, auditability, and deterministic
+phrase/word-game utilities. It is not a production autonomous navigation system.
 
-The repository is organized around a minimal, dependency-light Python core and an
-optional native acceleration path built with CMake and pybind11.
+## Current components
 
-## Current implementation
+- `src/ievf/state.py`: 16-bit state encoding and decoding
+- `src/ievf/serialization.py`: canonical JSON and SHA-256 helpers
+- `src/ievf/evidence.py`: immutable evidence records and validation
+- `src/ievf/audit.py`: hash-linked JSONL audit ledger
+- `src/ievf/lifecycle.py`: lifecycle and checkpoint validation
+- `src/ievf/wordgame.py`: deterministic word scoring and word-ladder checks
+- `src/ievf/phrase_communication.py`: explicit phrase templates and slot extraction
+- `src/ievf/native_wrapper.py`: optional native matrix kernel with explicit fallback
+- `src/fault_tolerance.py`: quorum, retry, checkpoint, and guarded recovery primitives
+- `src/ievf/batch_runner.py`: memory-bounded synthetic matrix-contraction benchmark batches
 
-The active package and utility modules are:
+The optional native extension is defined in `native/CMakeLists.txt` and
+`native/contraction.cpp`, and can be built with `python build_native.py`.
 
-- `src/ievf/state.py`: 16-bit state encoding/decoding helpers
-- `src/ievf/serialization.py`: canonical JSON and SHA-256 helper methods
-- `src/ievf/evidence.py`: immutable evidence record structure and validation
-- `src/ievf/audit.py`: hash-linked JSONL audit ledger with sequence checks
-- `src/ievf/lifecycle.py`: lifecycle and checkpoint validation helpers
-- `src/ievf/wordgame.py`: deterministic word scoring and 1-character ladder validation
-- `src/ievf/phrase_communication.py`: explicit phrase-template matcher with slot extraction
-- `src/ievf/native_wrapper.py`: optional native extension import and fallback wrapper
-- `src/fault_tolerance.py`: quorum gates, bounded retry, checkpoint integrity, and guarded recovery logic
+## Dependencies and installation
 
-The native extension is built from:
-
-- `native/CMakeLists.txt`
-- `native/contraction.cpp`
-
-The project also includes:
-
-- `build_native.py`: optional CMake-backed native build and import validation
-- `pyproject.toml`: build metadata and optional native dependency configuration
-- `.github/workflows/native.yml`: native build validation workflow
-- `.github/workflows/tests.yml`: cross-version Python test workflow
-
-## Design goals
-
-This repository emphasizes:
-
-- deterministic validation over speculative heuristics
-- fail-closed behavior and explicit integrity checks
-- minimal runtime dependencies
-- optional native acceleration without forcing native compilation for base users
-- small, testable modules that can be extended incrementally
-
-It is intentionally not a general-purpose autonomous control framework, language
-model, or full spacecraft navigation system.
-
-## Base installation
-
-The base project does not require a heavy runtime stack.
+The base package targets Python 3.11+ and has no mandatory runtime dependencies.
 
 ```bash
-python -m pip install -U pip
 python -m pip install -e .
 ```
 
-Base dependencies are intentionally minimal. The package is designed to stay
-usable without the optional native extension.
-
-## Optional native acceleration
-
-The native acceleration path is optional and is intended for environments that
-have a C++17 compiler and OpenMP support.
-
-Install the optional native dependencies:
+The native extension and benchmark require NumPy; compiling the extension also
+requires pybind11, CMake, a C++17 compiler, and an OpenMP-capable toolchain:
 
 ```bash
 python -m pip install -e '.[native]'
-```
-
-Then build the extension:
-
-```bash
 python build_native.py
 ```
 
-This uses CMake to configure and compile the optional native module, then verifies
-that the importable extension loads successfully.
+For benchmark-only use without compiling the extension:
 
-## Running tests
+```bash
+python -m pip install numpy
+```
 
-The repository uses the Python standard `unittest` discovery flow.
+## Tests
 
 ```bash
 PYTHONPATH=src python -m unittest discover -s tests -v
 ```
 
-To run the workflow-like native validation directly:
+Native kernel tests are skipped when the optional extension is not built. Native
+CI builds the extension first and runs those tests in strict native mode.
 
-```bash
-PYTHONPATH=src python -m unittest discover -s tests -p 'test_*.py' -v
+## Synthetic contraction benchmark
+
+`BatchRunner` runs deterministic, synthetic matrix multiplication cases, checks
+estimated allocation against a per-case memory limit, optionally compares output
+to NumPy, and appends JSONL measurements (backend, dimensions, timing, GFLOP/s,
+contraction count, and error) for later comparison. It does not simulate a mesh,
+Kalman filter, navigation, or real telemetry.
+
+```python
+from ievf.batch_runner import BatchRunner, BatchScenario
+
+scenarios = [
+    BatchScenario("baseline", m=128, k=128, n=128, seed=7),
+    BatchScenario("larger", m=256, k=256, n=128, seed=8),
+]
+results = BatchRunner("benchmark-results/run.jsonl").run_batch(scenarios)
+for result in results:
+    print(result.scenario, result.backend, result.mean_ms, result.gflops_at_min)
 ```
 
-## Repository structure
+The default memory cap is 256 MiB per scenario. Verification is limited to
+individual dimensions up to 2048 and is included in the allocation estimate.
 
-```text
-.
-├── .github/
-│   └── workflows/
-│       ├── native.yml
-│       └── tests.yml
-├── LICENSE
-├── README.md
-├── build_native.py
-├── native/
-│   ├── CMakeLists.txt
-│   └── contraction.cpp
-├── pyproject.toml
-├── src/
-│   ├── fault_tolerance.py
-│   └── ievf/
-│       ├── __init__.py
-│       ├── audit.py
-│       ├── evidence.py
-│       ├── lifecycle.py
-│       ├── native_wrapper.py
-│       ├── phrase_communication.py
-│       ├── serialization.py
-│       ├── state.py
-│       └── wordgame.py
-└── tests/
-```
+## Scope
 
-## Notes on scope and maturity
-
-This project is a prototype and research scaffold. It is suitable for:
-
-- state encoding experiments
-- deterministic validation flows
-- audit and evidence-chain reasoning
-- explicit phrase and command matching
-- optional native extension validation
-
-It is not a complete productized system for:
-
-- high-assurance autonomous control
-- full navigation autonomy
-- production-grade cryptographic attestation
-- unrestricted language understanding
-- general-purpose environmental world models
-
-## Optional native dependency summary
-
-The optional native path requires:
-
-- Python 3.11+
-- CMake 3.18+
-- C++17 compiler
-- OpenMP-enabled toolchain
-- `numpy>=1.26,<3`
-- `pybind11>=2.12,<4`
+The repository currently does not implement AETHER-MESH, quantum telemetry,
+GNSS/WGS-84 conversion, a Kalman filter, or production navigation. Any future
+multi-agent work should be clearly labeled as synthetic research simulation until
+validated independently.
 
 ## License
 
-Licensed under the AGPL-3.0-or-later terms described in `LICENSE`.
+Licensed under AGPL-3.0-or-later; see `LICENSE`.
