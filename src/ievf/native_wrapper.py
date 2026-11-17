@@ -1,15 +1,16 @@
 """Optional wrapper for the native 2-D matrix kernel.
 
-NumPy is only required when this wrapper is used. If the extension is missing,
-operations may use NumPy when ``allow_fallback=True``; callers and tests can
-require native execution explicitly with ``require_native=True``.
+NumPy is only required when this wrapper is used. Missing native support may
+fall back to NumPy only when allowed; ``require_native=True`` is fail-closed.
 """
 
 from __future__ import annotations
 
 try:
     from . import _tve1_native
-except ImportError as exc:
+except (ImportError, OSError) as exc:
+    # OSError also covers a present extension whose dependent runtime library
+    # (for example the OpenMP runtime) cannot be loaded.
     _tve1_native = None
     _NATIVE_IMPORT_ERROR = exc
 else:
@@ -21,13 +22,20 @@ class NativeCore:
 
     def __init__(self, *, require_native: bool = False, allow_fallback: bool = True) -> None:
         if require_native and _tve1_native is None:
-            raise RuntimeError("IEVF native extension is unavailable; run python build_native.py") from _NATIVE_IMPORT_ERROR
+            raise RuntimeError(
+                "IEVF native extension is unavailable; install native requirements and run python build_native.py"
+            ) from _NATIVE_IMPORT_ERROR
+        if _tve1_native is None and not allow_fallback:
+            raise RuntimeError(
+                "Fallback is disabled, but the native extension is unavailable."
+            ) from _NATIVE_IMPORT_ERROR
+
         self.use_native = _tve1_native is not None
         self.allow_fallback = allow_fallback
         self.contraction_count = 0
 
     def contract(self, tensor_a, tensor_b):
-        """Multiply two 2-D arrays. Successful calls increment the counter."""
+        """Multiply two 2-D arrays; count only successful operations."""
         try:
             import numpy as np
         except ImportError as exc:
@@ -45,6 +53,8 @@ class NativeCore:
         elif self.allow_fallback:
             result = a @ b
         else:
-            raise RuntimeError("native extension is unavailable and fallback is disabled")
+            # This can occur only if module state is changed after construction.
+            raise RuntimeError("native extension is unavailable and fallback is disabled") from _NATIVE_IMPORT_ERROR
+
         self.contraction_count += 1
         return result

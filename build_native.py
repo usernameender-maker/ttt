@@ -1,8 +1,4 @@
-"""Build the optional IEVF C++ matrix kernel into src/ievf.
-
-Requires CMake, a C++17 compiler with OpenMP, pybind11, and Python development
-headers. The core Python package has no new mandatory runtime dependencies.
-"""
+"""Build and verify the optional IEVF C++ matrix extension."""
 
 from __future__ import annotations
 
@@ -12,7 +8,9 @@ import subprocess
 import sys
 
 ROOT = Path(__file__).resolve().parent
-BUILD = ROOT / "build" / "native"
+NATIVE_DIR = ROOT / "native"
+BUILD_DIR = ROOT / "build" / "native"
+PACKAGE_DIR = ROOT / "src" / "ievf"
 
 
 def main() -> int:
@@ -23,29 +21,32 @@ def main() -> int:
             text=True,
         ).strip()
     except (subprocess.CalledProcessError, FileNotFoundError) as exc:
-        raise SystemExit("pybind11 and CMake must be installed to build the native module") from exc
+        raise SystemExit(
+            "pybind11 must be installed (for example: pip install '.[native]')"
+        ) from exc
 
     subprocess.run(
         [
-            "cmake", "-S", str(ROOT / "native"), "-B", str(BUILD),
+            "cmake", "-S", str(NATIVE_DIR), "-B", str(BUILD_DIR),
             f"-Dpybind11_DIR={cmake_dir}",
-            f"-DIEVF_PYTHON_OUTPUT_DIR={ROOT / 'src' / 'ievf'}",
+            f"-DIEVF_PYTHON_OUTPUT_DIR={PACKAGE_DIR}",
             "-DCMAKE_BUILD_TYPE=Release",
         ],
         cwd=ROOT,
         check=True,
     )
     subprocess.run(
-        ["cmake", "--build", str(BUILD), "--config", "Release"],
+        ["cmake", "--build", str(BUILD_DIR), "--config", "Release"],
         cwd=ROOT,
         check=True,
     )
 
+    # Import verifies ABI-suffixed module naming and load-time dependencies.
     env = os.environ.copy()
     src = str(ROOT / "src")
     env["PYTHONPATH"] = src + (os.pathsep + env["PYTHONPATH"] if env.get("PYTHONPATH") else "")
     subprocess.run(
-        [sys.executable, "-c", "import ievf._tve1_native as m; print(m.__file__)"] ,
+        [sys.executable, "-c", "import ievf._tve1_native as m; print(m.__file__)"],
         cwd=ROOT,
         env=env,
         check=True,

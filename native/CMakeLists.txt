@@ -16,9 +16,9 @@ target_compile_features(_tve1_native PRIVATE cxx_std_17)
 
 # Portable optimization only; avoid fast-math and host-specific ISA flags.
 if(MSVC)
-    target_compile_options(_tve1_native PRIVATE /O2)
+    target_compile_options(_tve1_native PRIVATE /O2 /Oi)
 else()
-    target_compile_options(_tve1_native PRIVATE -O3)
+    target_compile_options(_tve1_native PRIVATE -O3 -Wall -Wextra)
 endif()
 
 set(IEVF_PYTHON_OUTPUT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../src/ievf" CACHE PATH
